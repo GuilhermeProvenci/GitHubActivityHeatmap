@@ -53,6 +53,7 @@
     "test:watch": "vitest",
     "typecheck": "tsc --noEmit",
     "prepublishOnly": "npm run build",
+    "prepare": "npm run build",
     "changeset": "changeset",
     "release": "changeset publish"
   },
