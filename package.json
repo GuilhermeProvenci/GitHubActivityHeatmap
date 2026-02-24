@@ -1,0 +1,25 @@
+{
+  "name": "github-activity-heatmap",
+  "version": "1.0.0",
+  "private": true,
+  "description": "GitHub-style activity heatmap library",
+  "scripts": {
+    "build": "pnpm -r build",
+    "test": "pnpm -r test",
+    "lint": "eslint . --ext .ts,.tsx",
+    "format": "prettier --write \"**/*.{ts,tsx,json,md}\"",
+    "clean": "pnpm -r clean",
+    "example": "pnpm --filter @gh-heatmap/example-demo start"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "@typescript-eslint/eslint-plugin": "^6.0.0",
+    "@typescript-eslint/parser": "^6.0.0",
+    "eslint": "^8.0.0",
+    "prettier": "^3.0.0",
+    "tsup": "^8.0.0",
+    "typescript": "^5.0.0",
+    "vitest": "^1.0.0"
+  },
+  "packageManager": "pnpm@9.15.0"
+}

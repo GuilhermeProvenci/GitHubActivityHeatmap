@@ -1,0 +1,1 @@
+export { GitHubAggregator } from './GitHubAggregator';

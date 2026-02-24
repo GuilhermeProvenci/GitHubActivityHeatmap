@@ -1,0 +1,51 @@
+{
+    "name": "@gh-heatmap/frontend",
+    "version": "1.0.0",
+    "description": "Frontend components for GitHub Activity Heatmap",
+    "main": "./dist/index.js",
+    "module": "./dist/index.mjs",
+    "types": "./dist/index.d.ts",
+    "exports": {
+        ".": {
+            "require": "./dist/index.js",
+            "import": "./dist/index.mjs",
+            "types": "./dist/index.d.ts"
+        },
+        "./react": {
+            "require": "./dist/react.js",
+            "import": "./dist/react.mjs",
+            "types": "./dist/react.d.ts"
+        },
+        "./styles.css": "./dist/styles.css"
+    },
+    "scripts": {
+        "build": "tsup src/index.ts src/renderers/react.tsx --format cjs,esm --dts",
+        "test": "vitest",
+        "clean": "rimraf dist"
+    },
+    "dependencies": {
+        "@gh-heatmap/core": "workspace:*"
+    },
+    "peerDependencies": {
+        "react": "^18.0.0",
+        "vue": "^3.0.0"
+    },
+    "peerDependenciesMeta": {
+        "react": {
+            "optional": true
+        },
+        "vue": {
+            "optional": true
+        }
+    },
+    "keywords": [
+        "github",
+        "heatmap",
+        "visualization",
+        "component"
+    ],
+    "license": "MIT",
+    "devDependencies": {
+        "@types/react": "^19.2.14"
+    }
+}
