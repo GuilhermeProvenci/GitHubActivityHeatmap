@@ -1,12 +1,12 @@
 {
-  "name": "gh-heatmap-private-repo",
+  "name": "provenci-heatmap-activity",
   "version": "0.2.2",
   "description": "GitHub-style contribution heatmap — SVG generation, DOM component, and React wrapper.",
   "author": "Guilherme Provenci",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/GuilhermeProvenci/GitHubActivityHeatmap.git"
+    "url": "git+https://github.com/GuilhermeProvenci/GitHubActivityHeatmap.git"
   },
   "homepage": "https://github.com/GuilhermeProvenci/GitHubActivityHeatmap#readme",
   "keywords": [
