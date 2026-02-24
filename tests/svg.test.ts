@@ -43,9 +43,10 @@ describe('generateHeatmapSVG', () => {
       startDate: '2024-01-01',
       endDate: '2024-12-31',
     });
-    expect(svg).toContain('>Jan<');
+    // Months with enough space get labels (edge months may be skipped to avoid overlap)
+    expect(svg).toContain('>Mar<');
     expect(svg).toContain('>Jun<');
-    expect(svg).toContain('>Dec<');
+    expect(svg).toContain('>Sep<');
   });
 
   it('hides month labels when showMonthLabels is false', () => {

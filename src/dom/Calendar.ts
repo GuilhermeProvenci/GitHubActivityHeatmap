@@ -45,18 +45,24 @@ export class Calendar {
     const endDate = new Date(this.options.endDate + 'T00:00:00Z');
     const weekWidth = this.options.theme.grid.cellSize + this.options.theme.grid.gap;
     let lastMonth = -1;
+    let lastLabelX = -Infinity;
+    const minLabelSpacing = weekWidth * 3; // need at least ~3 weeks of space
     const current = new Date(startDate);
     while (current.getUTCDay() !== this.options.weekStart) current.setUTCDate(current.getUTCDate() - 1);
     let weekIndex = 0;
     while (current <= endDate) {
       const month = current.getUTCMonth();
       if (month !== lastMonth) {
-        const label = document.createElement('span');
-        label.className = 'gh-month-label';
-        label.textContent = MONTH_LABELS[month];
-        label.style.position = 'absolute';
-        label.style.left = `${weekIndex * weekWidth}px`;
-        container.appendChild(label);
+        const x = weekIndex * weekWidth;
+        if (x - lastLabelX >= minLabelSpacing) {
+          const label = document.createElement('span');
+          label.className = 'gh-month-label';
+          label.textContent = MONTH_LABELS[month];
+          label.style.position = 'absolute';
+          label.style.left = `${x}px`;
+          container.appendChild(label);
+          lastLabelX = x;
+        }
         lastMonth = month;
       }
       current.setUTCDate(current.getUTCDate() + 7);

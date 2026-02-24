@@ -159,14 +159,19 @@ export function generateHeatmapSVG(
   const monthLabels: string[] = [];
   if (opts.showMonthLabels) {
     let lastMonth = -1;
+    let lastLabelX = -Infinity;
+    const minLabelSpacing = weekWidth * 3; // need at least ~3 weeks of space
     for (let w = 0; w < weeks.length; w++) {
       const firstDayOfWeek = weeks[w][0];
       const m = firstDayOfWeek.getUTCMonth();
       if (m !== lastMonth) {
         const x = gridOffsetX + w * weekWidth;
-        monthLabels.push(
-          `<text x="${x}" y="${headerHeight + 12}" fill="${getTextColor(opts.theme)}" font-size="12">${MONTHS[m]}</text>`,
-        );
+        if (x - lastLabelX >= minLabelSpacing) {
+          monthLabels.push(
+            `<text x="${x}" y="${headerHeight + 12}" fill="${getTextColor(opts.theme)}" font-size="12">${MONTHS[m]}</text>`,
+          );
+          lastLabelX = x;
+        }
         lastMonth = m;
       }
     }

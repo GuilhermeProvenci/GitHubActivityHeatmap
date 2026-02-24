@@ -15,7 +15,10 @@
       "Bash(cd /d/GitHubActivityHeatmap && npm test 2>&1)",
       "Bash(cd /d/GitHubActivityHeatmap-API && npm install /d/GitHubActivityHeatmap 2>&1)",
       "Bash(cd /d/GitHubActivityHeatmap-API && npx tsc --noEmit 2>&1)",
-      "Bash(cd /d/GitHubActivityHeatmap && npx tsc --noEmit 2>&1)"
+      "Bash(cd /d/GitHubActivityHeatmap && npx tsc --noEmit 2>&1)",
+      "Bash(cd /d/GitHubActivityHeatmap-API && npm install vercel --save-dev 2>&1)",
+      "Bash(cd /d/GitHubActivityHeatmap-API && npm install tsx --save-dev 2>&1)",
+      "Bash(head:*)"
     ]
   }
 }
