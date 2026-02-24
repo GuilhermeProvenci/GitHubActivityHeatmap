@@ -45,12 +45,16 @@ export async function fetchPublicCommits(
       url += `&author=${encodeURIComponent(authorFilter)}`;
     }
 
-    const res = await fetch(url, {
-      headers: {
-        Accept: 'application/vnd.github.v3+json',
-        'User-Agent': 'gh-heatmap',
-      },
-    });
+    const headers: Record<string, string> = {
+      Accept: 'application/vnd.github.v3+json',
+      'User-Agent': 'gh-heatmap',
+    };
+
+    if (typeof process !== 'undefined' && process.env.GITHUB_TOKEN) {
+      headers.Authorization = `Bearer ${process.env.GITHUB_TOKEN}`;
+    }
+
+    const res = await fetch(url, { headers });
 
     if (!res.ok) {
       const remaining = res.headers.get('x-ratelimit-remaining');
