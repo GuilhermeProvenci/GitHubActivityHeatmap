@@ -1,6 +1,6 @@
 {
-  "name": "gh-heatmap",
-  "version": "0.1.0",
+  "name": "gh-heatmap-private-repo",
+  "version": "0.2.2",
   "description": "GitHub-style contribution heatmap — SVG generation, DOM component, and React wrapper.",
   "author": "Guilherme Provenci",
   "license": "MIT",
