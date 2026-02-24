@@ -160,7 +160,7 @@ export function generateHeatmapSVG(
   if (opts.showMonthLabels) {
     let lastMonth = -1;
     let lastLabelX = -Infinity;
-    const minLabelSpacing = weekWidth * 3; // need at least ~3 weeks of space
+    const minLabelSpacing = Math.max(weekWidth * 3, 40); // need at least ~40px space
     for (let w = 0; w < weeks.length; w++) {
       const firstDayOfWeek = weeks[w][0];
       const m = firstDayOfWeek.getUTCMonth();
@@ -171,8 +171,8 @@ export function generateHeatmapSVG(
             `<text x="${x}" y="${headerHeight + 12}" fill="${getTextColor(opts.theme)}" font-size="12">${MONTHS[m]}</text>`,
           );
           lastLabelX = x;
+          lastMonth = m;
         }
-        lastMonth = m;
       }
     }
   }

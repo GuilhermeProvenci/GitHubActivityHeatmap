@@ -46,7 +46,7 @@ export class Calendar {
     const weekWidth = this.options.theme.grid.cellSize + this.options.theme.grid.gap;
     let lastMonth = -1;
     let lastLabelX = -Infinity;
-    const minLabelSpacing = weekWidth * 3; // need at least ~3 weeks of space
+    const minLabelSpacing = Math.max(weekWidth * 3, 40); // need at least ~40px space
     const current = new Date(startDate);
     while (current.getUTCDay() !== this.options.weekStart) current.setUTCDate(current.getUTCDate() - 1);
     let weekIndex = 0;
@@ -62,8 +62,8 @@ export class Calendar {
           label.style.left = `${x}px`;
           container.appendChild(label);
           lastLabelX = x;
+          lastMonth = month;
         }
-        lastMonth = month;
       }
       current.setUTCDate(current.getUTCDate() + 7);
       weekIndex++;
@@ -71,13 +71,19 @@ export class Calendar {
     container.style.position = 'relative';
     container.style.height = '16px';
     container.style.width = `${weekIndex * weekWidth}px`;
-    if (this.options.showDayLabels) container.style.marginLeft = '28px';
+    if (this.options.showDayLabels) container.style.marginLeft = '32px';
     return container;
   }
 
   private buildDayLabels(): HTMLElement {
     const container = document.createElement('div');
     container.className = 'gh-calendar-labels';
+    container.style.width = '32px';
+    container.style.display = 'flex';
+    container.style.flexDirection = 'column';
+    container.style.paddingRight = '4px';
+    container.style.boxSizing = 'border-box';
+    container.style.textAlign = 'right';
     container.style.gap = `${this.options.theme.grid.gap}px`;
     const orderedDays = this.options.weekStart === 1 ? [...DAY_LABELS.slice(1), DAY_LABELS[0]] : DAY_LABELS;
     for (let i = 0; i < 7; i++) {
