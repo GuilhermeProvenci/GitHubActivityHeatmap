@@ -1,8 +1,8 @@
-# gh-heatmap
+# provenci-heatmap-activity
 
 GitHub-style contribution heatmap — SVG generation, DOM component, and React wrapper.
 
-[![npm](https://img.shields.io/npm/v/gh-heatmap)](https://www.npmjs.com/package/gh-heatmap)
+[![npm](https://img.shields.io/npm/v/provenci-heatmap-activity)](https://www.npmjs.com/package/provenci-heatmap-activity)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
 ## Features
@@ -11,13 +11,13 @@ GitHub-style contribution heatmap — SVG generation, DOM component, and React w
 - **DOM component** — vanilla JS heatmap with tooltips and click events
 - **React wrapper** — drop-in `<ActivityHeatmap>` component
 - **Built-in themes** — `dark`, `light`, `github`, `minimal` (or bring your own)
-- **GitHub fetcher** — pull public commit data with no API token
+- **GitHub fetcher** — pull public commit data with no API token (or private data with a token)
 - **Tree-shakeable** — subpath exports, `sideEffects: false`
 
 ## Install
 
 ```bash
-npm install gh-heatmap
+npm install provenci-heatmap-activity
 ```
 
 ## Quick Start
@@ -25,9 +25,10 @@ npm install gh-heatmap
 ### SVG (Server / Node.js)
 
 ```ts
-import { generateHeatmapSVG, fetchPublicCommits } from 'gh-heatmap';
+import { generateHeatmapSVG, fetchPublicCommits } from 'provenci-heatmap-activity';
 
-const { data } = await fetchPublicCommits('owner/repo', '2024-01-01', '2024-12-31');
+// Fetches last 365 days by default
+const { data } = await fetchPublicCommits('owner/repo');
 
 const svg = generateHeatmapSVG(data, {
   theme: 'dark',
@@ -41,7 +42,7 @@ const svg = generateHeatmapSVG(data, {
 ### DOM (Vanilla JS)
 
 ```ts
-import { Heatmap } from 'gh-heatmap/dom';
+import { Heatmap } from 'provenci-heatmap-activity/dom';
 
 const heatmap = new Heatmap(document.getElementById('app')!, {
   endpoint: '/api/activity?repository=owner/repo',
@@ -53,7 +54,7 @@ heatmap.load();
 ### React
 
 ```tsx
-import { ActivityHeatmap } from 'gh-heatmap/react';
+import { ActivityHeatmap } from 'provenci-heatmap-activity/react';
 
 function App() {
   return <ActivityHeatmap endpoint="/api/activity?repository=owner/repo" />;
@@ -62,11 +63,11 @@ function App() {
 
 ## Subpath Exports
 
-| Import                    | Description                              |
-| ------------------------- | ---------------------------------------- |
-| `gh-heatmap`              | Core: SVG gen, themes, utils, fetcher, cache |
-| `gh-heatmap/dom`          | DOM heatmap, calendar, tooltip           |
-| `gh-heatmap/react`        | React `<ActivityHeatmap>` component      |
+| Import                             | Description                              |
+| ---------------------------------- | ---------------------------------------- |
+| `provenci-heatmap-activity`        | Core: SVG gen, themes, utils, fetcher, cache |
+| `provenci-heatmap-activity/dom`    | DOM heatmap, calendar, tooltip           |
+| `provenci-heatmap-activity/react`  | React `<ActivityHeatmap>` component      |
 
 ## SVG Options
 
@@ -83,9 +84,38 @@ generateHeatmapSVG(data, {
   showHeader: true,
   headerText: '{{count}} contributions in the last year',
   backgroundColor: 'transparent',
-  startDate: '2024-01-01',
-  endDate: '2024-12-31',
+  startDate: '2024-01-01', // Optional
+  endDate: '2024-12-31',   // Optional
 });
+```
+
+## Private Repositories & Rate Limits
+
+By default, the library uses the unauthenticated GitHub API (limited to 60 requests/hour/IP, public repos only).
+
+To access **private repositories** or increase your limit to **5,000 requests/hour**, set a `GITHUB_TOKEN` environment variable in your server environment:
+
+```bash
+# Example .env or Vercel Environment Variable
+GITHUB_TOKEN=your_personal_access_token
+```
+
+The library will automatically detect this variable and use it in the `Authorization` header.
+
+## GitHub Fetcher
+
+```ts
+import { fetchPublicCommits } from 'provenci-heatmap-activity';
+
+const result = await fetchPublicCommits(
+  'facebook/react',      // owner/repo
+  '2024-01-01',          // optional startDate
+  '2024-12-31',          // optional endDate
+  'gaearon',             // optional author filter
+);
+
+// result.data    → ActivityData[] (date + count)
+// result.authors → { login, commits }[]
 ```
 
 ## Themes
@@ -102,8 +132,8 @@ Four built-in themes matching GitHub's palettes:
 Custom themes:
 
 ```ts
-import { generateHeatmapSVG } from 'gh-heatmap';
-import type { Theme } from 'gh-heatmap';
+import { generateHeatmapSVG } from 'provenci-heatmap-activity';
+import type { Theme } from 'provenci-heatmap-activity';
 
 const custom: Theme = {
   colors: { empty: '#1a1a2e', level1: '#16213e', level2: '#0f3460', level3: '#533483', level4: '#e94560' },
@@ -114,28 +144,10 @@ const custom: Theme = {
 generateHeatmapSVG(data, { theme: custom });
 ```
 
-## GitHub Fetcher
-
-```ts
-import { fetchPublicCommits } from 'gh-heatmap';
-
-const result = await fetchPublicCommits(
-  'facebook/react',      // owner/repo
-  '2024-01-01',          // startDate
-  '2024-12-31',          // endDate
-  'gaearon',             // optional author filter
-);
-
-// result.data    → ActivityData[] (date + count)
-// result.authors → { login, commits }[]
-```
-
-No API token required for public repositories. Rate-limited to ~60 req/hr (unauthenticated).
-
 ## Cache
 
 ```ts
-import { MemoryCache } from 'gh-heatmap';
+import { MemoryCache } from 'provenci-heatmap-activity';
 
 const cache = new MemoryCache<string>(60_000); // 60s TTL
 cache.set('key', 'value');
