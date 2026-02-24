@@ -1,0 +1,21 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(cd \"D:/GitHubActivityHeatmap\" && pnpm install 2>&1)",
+      "Bash(curl:*)",
+      "Bash(netstat:*)",
+      "Bash(taskkill:*)",
+      "Bash(curl -s \"http://localhost:3334/api/activity?repository=facebook/react\" 2>&1 | python3 -c \"import sys,json; d=json.load\\(sys.stdin\\); print\\(f'Data points: {len\\(d[\\\\\"data\\\\\"]\\)}'\\); print\\(f'Authors: {len\\(d[\\\\\"authors\\\\\"]\\)}'\\); [print\\(f'  {a[\\\\\"login\\\\\"]}: {a[\\\\\"commits\\\\\"]} commits'\\) for a in d['authors'][:5]]\" 2>&1)",
+      "Bash(node:*)",
+      "Bash(echo:*)",
+      "Bash(cd /d/GitHubActivityHeatmap && pnpm run build 2>&1)",
+      "Bash(cd:*)",
+      "Bash(cd /d/GitHubActivityHeatmap && npm install 2>&1)",
+      "Bash(cd /d/GitHubActivityHeatmap && npm run build 2>&1)",
+      "Bash(cd /d/GitHubActivityHeatmap && npm test 2>&1)",
+      "Bash(cd /d/GitHubActivityHeatmap-API && npm install /d/GitHubActivityHeatmap 2>&1)",
+      "Bash(cd /d/GitHubActivityHeatmap-API && npx tsc --noEmit 2>&1)",
+      "Bash(cd /d/GitHubActivityHeatmap && npx tsc --noEmit 2>&1)"
+    ]
+  }
+}

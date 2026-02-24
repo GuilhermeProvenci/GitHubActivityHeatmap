@@ -1,104 +1,156 @@
-# GitHub Activity Heatmap
+# gh-heatmap
 
-A TypeScript library for generating GitHub-style contribution heatmaps from private repositories without exposing sensitive code or repository details.
+GitHub-style contribution heatmap — SVG generation, DOM component, and React wrapper.
 
-## ✨ Features
+[![npm](https://img.shields.io/npm/v/gh-heatmap)](https://www.npmjs.com/package/gh-heatmap)
+[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
-- **Privacy-First** — Exposes only aggregated commit counts by date
-- **Flexible Queries** — Filter by repository, author, branch, path
-- **Multi-Mode** — Single repo, multi-author, multi-repository, or combined views
-- **GitHub-Style UI** — Familiar heatmap visualization with themes
-- **Framework Agnostic** — Vanilla JS core + React wrapper
-- **Caching Layer** — Memory, File, or Redis strategies
-- **TypeScript Native** — Full type safety across all packages
+## Features
 
-## 📦 Packages
+- **SVG generation** — server-side, zero DOM dependency, embeddable in READMEs
+- **DOM component** — vanilla JS heatmap with tooltips and click events
+- **React wrapper** — drop-in `<ActivityHeatmap>` component
+- **Built-in themes** — `dark`, `light`, `github`, `minimal` (or bring your own)
+- **GitHub fetcher** — pull public commit data with no API token
+- **Tree-shakeable** — subpath exports, `sideEffects: false`
 
-| Package | Description |
-|---------|-------------|
-| `@gh-heatmap/core` | Shared types and utilities |
-| `@gh-heatmap/backend` | GitHub API aggregation service |
-| `@gh-heatmap/frontend` | Heatmap visualization components |
+## Install
 
-## 🚀 Quick Start
-
-### Backend (Express)
-
-```typescript
-import express from 'express';
-import { GitHubAggregator, createExpressHandler } from '@gh-heatmap/backend';
-
-const app = express();
-
-const aggregator = new GitHubAggregator({
-  githubToken: process.env.GITHUB_TOKEN!,
-  repository: 'myorg/myrepo',
-  cache: { strategy: 'memory', ttl: 21600 },
-});
-
-app.use('/api', createExpressHandler(aggregator));
-app.listen(3000);
+```bash
+npm install gh-heatmap
 ```
 
-### Frontend (Vanilla JS)
+## Quick Start
 
-```typescript
-import { Heatmap } from '@gh-heatmap/frontend';
+### SVG (Server / Node.js)
 
-const heatmap = new Heatmap(document.getElementById('heatmap'), {
-  endpoint: '/api/activity',
-  theme: 'github',
-  showTooltip: true,
+```ts
+import { generateHeatmapSVG, fetchPublicCommits } from 'gh-heatmap';
+
+const { data } = await fetchPublicCommits('owner/repo', '2024-01-01', '2024-12-31');
+
+const svg = generateHeatmapSVG(data, {
+  theme: 'dark',
+  showHeader: true,
+  headerText: '{{count}} contributions in the last year',
+});
+
+// Serve as image/svg+xml, embed in <img>, or use in a README
+```
+
+### DOM (Vanilla JS)
+
+```ts
+import { Heatmap } from 'gh-heatmap/dom';
+
+const heatmap = new Heatmap(document.getElementById('app')!, {
+  endpoint: '/api/activity?repository=owner/repo',
 });
 
 heatmap.load();
 ```
 
-### Frontend (React)
+### React
 
 ```tsx
-import { ActivityHeatmap } from '@gh-heatmap/frontend/react';
+import { ActivityHeatmap } from 'gh-heatmap/react';
 
-<ActivityHeatmap
-  endpoint="/api/activity"
-  config={{ theme: 'dark', showMonthLabels: true }}
-/>
+function App() {
+  return <ActivityHeatmap endpoint="/api/activity?repository=owner/repo" />;
+}
 ```
 
-## 🔧 Development
+## Subpath Exports
+
+| Import                    | Description                              |
+| ------------------------- | ---------------------------------------- |
+| `gh-heatmap`              | Core: SVG gen, themes, utils, fetcher, cache |
+| `gh-heatmap/dom`          | DOM heatmap, calendar, tooltip           |
+| `gh-heatmap/react`        | React `<ActivityHeatmap>` component      |
+
+## SVG Options
+
+```ts
+generateHeatmapSVG(data, {
+  theme: 'dark',           // 'dark' | 'light' | 'github' | 'minimal' | Theme
+  cellSize: 10,            // pixels
+  cellGap: 3,              // pixels
+  borderRadius: 2,         // pixels
+  weekStart: 0,            // 0 = Sunday, 1 = Monday
+  showMonthLabels: true,
+  showDayLabels: true,
+  showLegend: true,
+  showHeader: true,
+  headerText: '{{count}} contributions in the last year',
+  backgroundColor: 'transparent',
+  startDate: '2024-01-01',
+  endDate: '2024-12-31',
+});
+```
+
+## Themes
+
+Four built-in themes matching GitHub's palettes:
+
+| Theme     | Empty     | Level 1   | Level 4   |
+| --------- | --------- | --------- | --------- |
+| `dark`    | `#161b22` | `#0e4429` | `#39d353` |
+| `light`   | `#ebedf0` | `#9be9a8` | `#216e39` |
+| `github`  | `#ebedf0` | `#9be9a8` | `#216e39` |
+| `minimal` | `#f6f8fa` | `#d0d7de` | `#6e7781` |
+
+Custom themes:
+
+```ts
+import { generateHeatmapSVG } from 'gh-heatmap';
+import type { Theme } from 'gh-heatmap';
+
+const custom: Theme = {
+  colors: { empty: '#1a1a2e', level1: '#16213e', level2: '#0f3460', level3: '#533483', level4: '#e94560' },
+  grid: { gap: 3, cellSize: 10, borderRadius: 2 },
+  tooltip: { background: '#1a1a2e', text: '#fff', border: '#333' },
+};
+
+generateHeatmapSVG(data, { theme: custom });
+```
+
+## GitHub Fetcher
+
+```ts
+import { fetchPublicCommits } from 'gh-heatmap';
+
+const result = await fetchPublicCommits(
+  'facebook/react',      // owner/repo
+  '2024-01-01',          // startDate
+  '2024-12-31',          // endDate
+  'gaearon',             // optional author filter
+);
+
+// result.data    → ActivityData[] (date + count)
+// result.authors → { login, commits }[]
+```
+
+No API token required for public repositories. Rate-limited to ~60 req/hr (unauthenticated).
+
+## Cache
+
+```ts
+import { MemoryCache } from 'gh-heatmap';
+
+const cache = new MemoryCache<string>(60_000); // 60s TTL
+cache.set('key', 'value');
+cache.get('key'); // 'value' | null
+```
+
+## Development
 
 ```bash
-# Install dependencies
-pnpm install
-
-# Build all packages
-pnpm build
-
-# Run tests
-pnpm test
-
-# Lint
-pnpm lint
+npm install
+npm run build      # tsup → dist/
+npm test           # vitest
+npm run typecheck  # tsc --noEmit
 ```
 
-## 📁 Project Structure
-
-```
-packages/
-  core/       — Types & utilities
-  backend/    — GitHub API aggregation
-  frontend/   — Heatmap components
-examples/
-  express-api/ — Express server example
-  vanilla-js/  — Browser demo
-```
-
-## 🎨 Themes
-
-Three built-in themes: `github` (light), `dark`, and `minimal`.
-
-Custom themes are also supported via the `Theme` interface.
-
-## 📄 License
+## License
 
 MIT
