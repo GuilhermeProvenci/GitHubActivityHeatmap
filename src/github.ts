@@ -7,6 +7,8 @@ interface RawCommit {
   author?: { login?: string };
 }
 
+import { formatDateISO, getDefaultEndDate, getDefaultStartDate } from './utils';
+
 /**
  * Fetches commits from a public GitHub repository using the REST API.
  * No token required for public repos.
@@ -15,14 +17,14 @@ interface RawCommit {
  * sorted by commit count.
  *
  * @param repo - Repository in "owner/repo" format
- * @param startDate - Start date in YYYY-MM-DD format
- * @param endDate - End date in YYYY-MM-DD format
+ * @param startDate - Optional start date in YYYY-MM-DD format (default: 365 days ago)
+ * @param endDate - Optional end date in YYYY-MM-DD format (default: today)
  * @param authorFilter - Optional GitHub username to filter commits
  */
 export async function fetchPublicCommits(
   repo: string,
-  startDate: string,
-  endDate: string,
+  startDate: string | undefined = getDefaultStartDate(),
+  endDate: string | undefined = getDefaultEndDate(),
   authorFilter?: string,
 ): Promise<FetchResult> {
   const [owner, repoName] = repo.split('/');
